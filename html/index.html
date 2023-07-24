@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="text/javascript">
+        var socket = new WebSocket("ws://localhost:8081/");
+
+        socket.onopen = function () {
+            console.log("Connected to server");
+        };
+
+        socket.onmessage = function (event) {
+            console.log("Received message: " + event.data);
+            // if (event.data.startsWith("ID: ")) {
+
+            const json = event.data
+
+            try {
+                const jsonObject = JSON.parse(json);
+                // there are better ways to do this.
+                // but sometimes, brute force has a quality all by itself
+                if ('Users' in jsonObject &&  'Chatrooms' in jsonObject) {
+                   // two lists, one for Users and the other for chatrooms
+                   var u = document.getElementById("userList");
+                   u.textContent = "Users online: " + jsonObject.Users;
+                   var c = document.getElementById("chatroomList");
+                   c.textContent = "Chatrooms online: " + jsonObject.Chatrooms;
+                }
+                else if ("From" in jsonObject) {
+                   var u = document.getElementById("recvText");
+                   u.textContent = u.textContent + '\n From: ' + jsonObject.From + ' ' + jsonObject.Text + '\n';
+                } 
+                else {
+                    console.log('input not processed' + json);
+                }
+            } catch (error) {
+                console.log('Invalid JSON:', error);
+            }
+        };
+
+        socket.onclose = function (event) {
+            console.log("Connection closed");
+        };
+
+        function sendMessage() {
+            var message = document.getElementById("message").value;
+            socket.send(message);
+        }
+
+        class LoginMessage {
+            Type = "Login";
+            Name = "";
+        }
+
+        function submitName() {
+            console.log("the submit name has been pressed");
+            var U = new LoginMessage();
+            U.Name = document.getElementById("clientname").value; 
+            socket.send(JSON.stringify(U));
+            console.log(JSON.stringify(U))
+        }
+
+        class ChatroomMessage {
+            Type = "Chatroom";
+            Name = "";
+        }
+
+        function submitChatroom() {
+            console.log("the submit chatroom has been pressed");
+            var U = new ChatroomMessage();
+            U.Name = document.getElementById("chatroomname").value; 
+            socket.send(JSON.stringify(U));
+            console.log(JSON.stringify(U))
+        }
+
+        class TextMessage {
+            Type = "Text";
+            Text = "";
+        }
+
+        function submitText() {
+            console.log("the submit chatroom has been pressed");
+            var U = new TextMessage();
+            U.Text = document.getElementById("chattext").value; 
+            socket.send(JSON.stringify(U));
+            console.log(JSON.stringify(U))
+        }
+
+    </script>
+</head>
+
+<body>
+    <!--  Each div below handles a specific action   -->
+    <!--  They can be hidden with "login.style.display === "none" -->
+    <!--                  -->
+    <!--                  -->
+    <div id="login">
+         <!--                  -->
+         <div>
+            <label id="userList"></label>
+         </div>
+         <div>
+            <label id="chatroomList"></label>
+         </div>
+         <div>
+            <label >Your name:</label>
+            <input type="text" id="clientname">
+            <button type="button" onclick="submitName()">Submit</button>
+         </div>
+    </div>
+    <div id="selectChat">
+         <div>
+            <!--                  -->
+            <label >Join Chatroom</label>
+            <input type="text" id="chatroomname">
+            <button type="button" onclick="submitChatroom()">Submit</button>
+    </div>
+    <div id="sendChat">
+         <!--                  -->
+            <label >Chat</label>
+            <input type="text" id="chattext">
+            <button type="button" onclick="submitText()">Send</button>
+    </div>
+    <div id="recvChat">
+        <label id="recvText" </label> 
+    </div>
+
+
+
+
+</body>
+
+</html>
