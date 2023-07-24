@@ -28,7 +28,8 @@
                 }
                 else if ("From" in jsonObject) {
                    var u = document.getElementById("recvText");
-                   u.textContent = u.textContent + '\n From: ' + jsonObject.From + ' ' + jsonObject.Text + '\n';
+                   var newline='\n';
+                   u.innerText = u.innerText + newline + 'From: ' + jsonObject.From + ' ' + jsonObject.Text + newline;
                 } 
                 else {
                     console.log('input not processed' + json);
