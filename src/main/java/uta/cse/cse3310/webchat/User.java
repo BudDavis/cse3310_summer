@@ -9,6 +9,10 @@ public class User {
     // a conn is needed to be able to know where to send the messages
     WebSocket conn;
 
+    public User() {
+
+    }
+
     public User(String N) {
         Name = N;
         conn = null;
@@ -17,6 +21,11 @@ public class User {
     public User(WebSocket C) {
         conn = C;
         Name = "";
+    }
+
+    public User(WebSocket C, String N) {
+        conn = C;
+        Name = N;
     }
 
 }

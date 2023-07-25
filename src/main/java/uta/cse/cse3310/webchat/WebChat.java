@@ -19,11 +19,10 @@ import com.google.gson.GsonBuilder;
 public class WebChat extends WebSocketServer {
 
     // All users connected at this time
-    // Vector<User> Users = new Vector<User>();
     UserList Users = new UserList();
 
     // All chatrooms that exist at this time
-    Vector<ChatRoom> ActiveRooms = new Vector<ChatRoom>();
+    ChatRooms ActiveRooms = new ChatRooms();
 
     public WebChat(int port) throws UnknownHostException {
         super(new InetSocketAddress(port));
@@ -40,8 +39,6 @@ public class WebChat extends WebSocketServer {
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
 
-        // conn.send("Welcome to the server!");
-
         String W = (conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
         System.out.println(W); // Prints the statement to stdout to indicate a new connection has opened
 
@@ -53,16 +50,7 @@ public class WebChat extends WebSocketServer {
         Users.add(U);
 
         // And we need to add it to the 'lobby', because it has to be somewhere.
-        // (at this point, maybe a vector was not the ideal data structure...)
-        Integer found = -1;
-        for (Integer i = 0; i < ActiveRooms.size(); i++) {
-            if (ActiveRooms.get(i).Name == "lobby") {
-                found = i;
-            }
-            System.out.print(ActiveRooms.get(i).Name + " ");
-        }
-        // Add this new user to the lobby
-        ActiveRooms.get(found).addUser(U);
+        ActiveRooms.addUser(U, "lobby");
 
         // Next, we send the information that is needed by the client web page.
         // At this time we don't know the users name or anything, but we can tell
@@ -84,16 +72,6 @@ public class WebChat extends WebSocketServer {
         // This is where it should be logged.
         App.saveToLog(jsonString);
 
-        // ChatRoom.addUser(conn);
-        // Id++;
-
-        // Gson gson = new Gson();
-        // String json = gson.toJson("Client ID: " + Id);
-        // conn.send(json); // sends the client's ID to the client browser
-        // System.out.println(json); // prints the client's ID to stdout
-
-        // String wson = gson.toJson(W);
-        // broadcast(wson); // sends the message to the entire chatroom
     }
 
     @Override
