@@ -2,33 +2,19 @@ package uta.cse.cse3310.webchat;
 
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-
-// Way more imports than are needed.
-// Sloppy work....
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.ByteChannel;
-import java.nio.channels.NotYetConnectedException;
-import java.nio.channels.SocketChannel;
-import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.concurrent.Executors;
-import javax.net.ssl.SSLContext;
 
-import org.java_websocket.drafts.Draft;
 import org.java_websocket.WebSocket;
+//import org.java_websocket.server.DefaultWebSocketServerFactoryTest;
+import org.java_websocket.WebSocketAdapter;
+//import org.java_websocket.drafts.Draft;
+//import org.java_websocket.handshake.Handshakedata;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.drafts.Draft_6455;
-import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.handshake.Handshakedata;
-import org.java_websocket.server.WebSocketServer;
 import org.java_websocket.server.DefaultWebSocketServerFactory;
-import org.java_websocket.server.DefaultWebSocketServerFactoryTest;
-import org.java_websocket.WebSocketAdapter;
-import org.java_websocket.drafts.Draft;
-import org.java_websocket.handshake.Handshakedata;
+import org.junit.Test;
 
 /**
  * Unit test for simple App.
@@ -97,10 +83,11 @@ public class ChatRoomsTest {
    public void addUser() {
       // Add a user to a chatroom
 
-      ChatRooms CR = new ChatRooms();
+      // Make a bunch of Chatrooms
+      ChatRooms CRs = new ChatRooms();
 
-      // First, we need a conn, of type WebSocket
-     
+      // First, we need a 'conn', of type 'WebSocket'
+
       DefaultWebSocketServerFactory webSocketServerFactory = new DefaultWebSocketServerFactory();
       CustomWebSocketAdapter webSocketAdapter = new CustomWebSocketAdapter();
       WebSocketImpl webSocketImpl = webSocketServerFactory.createWebSocket(webSocketAdapter, new Draft_6455());
@@ -110,9 +97,24 @@ public class ChatRoomsTest {
       User U = new User(conn);
 
       // Add it to a chatroom
-      CR.addUser(U,"lobby");
+      CRs.addUser(U, "lobby");
 
-      assertTrue(CR.size()==1);  // only one called lobby
+      assertTrue(CRs.size() == 1); // only one called lobby
+
+      // Let's add another one
+      User U2 = new User(conn);
+      CRs.addUser(U2, "somename");
+
+      // should be 2
+      assertTrue(CRs.size() == 2);
+
+      // try to add a chatroom that exists
+      User U3 = new User(conn);
+      CRs.addUser(U3, "somename");
+
+      // should be 2
+      assertTrue(CRs.size() == 2);
+
    }
 
    @Test
